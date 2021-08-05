@@ -19,64 +19,68 @@ const startMenu = () => {
         ],
     })
 
-    .then((answer) => {
-        switch (answer.action) {
-            case 'View all employees': 
-                viewEmployees();
-                break;
+        .then((answer) => {
+            switch (answer.action) {
+                case 'View all employees':
+                    viewEmployees();
+                    break;
 
-            case 'View all roles': 
-                viewRoles();
-                break;
+                case 'View all roles':
+                    viewRoles();
+                    break;
 
-            case 'View all departments': 
-                viewDepartment();
-                break;
+                case 'View all departments':
+                    viewDepartments();
+                    break;
 
-            case 'Add department': 
-                addDepartment();
-                break;
+                case 'Add employee':
+                    addEmployee();
+                    break;
 
-            case 'Add role': 
-                addRole();
-                break;
+                case 'Add department':
+                    addDepartment();
+                    break;
 
-            case 'Add employee': 
-                addEmployee();
-                break;
+                case 'Add role':
+                    addRole();
+                    break;
 
-            case 'Update employee role': 
-                updateEmployeeRole();
-                break;
+                case 'Update employee role':
+                    updateEmployeeRole();
+                    break;
 
-            case "Exit Application":
-                db.connection.end();
-                break;
+                default:
+                    console.log(`Invalid action: ${answer.action}`);
+                    break;
 
-        }
-    });
+            }
+        });
 };
 
 
 async function viewEmployees () {
-    let employees = await db.findAllEmployees();
+    let employees = await db.viewEmployees();
     console.table(employees);
     startMenu();
 };
 
-async function viewDepartment () {
-    let departments = await db.findAllDepartments();
+async function viewDepartments () {
+    let departments = await db.viewDepartments();
     console.table(departments);
     startMenu();
   }
 
 async function viewRoles () {
-    let roles = await db.findAllRoles();
+    let roles = await db.viewRoles();
     console.table(roles);
     startMenu();
 };
 
+
+
+
 async function addEmployee() {
+    let employee = await
     inquirer.prompt([
         {
             name: 'first name',
@@ -102,14 +106,13 @@ async function addEmployee() {
             message: "What is the employee's manager id?"
         }
     ])
-
-    .then((answer) => {
-        db.updateEmployee(answer);
-        startMenu();
-    });
-}
+    let employees = await db.addEmployee(employee);
+    console.log(employees.affectedRows + " employee added.");
+    startMenu();
+};
 
 async function addDepartment() {
+    let department = await
     inquirer.prompt([
         {
             type: "input",
@@ -122,13 +125,13 @@ async function addDepartment() {
             message: "What is the department's id?",
         }
     ])
-        .then((answer) => {
-            db.updateDepartment(answer);
-            startMenu();
-        });
-}
+    let employees = await db.addDepartment(department);
+    console.log(employees.affectedRows + " department added.");
+    startMenu();
+};
 
 async function addRole() {
+    let role = await inquirer
     inquirer.prompt([
         {
             type: "input",
@@ -151,13 +154,15 @@ async function addRole() {
             message: "What is the department id for this role?",
         },
     ])
-        .then((answer) => {
-            db.updateRole(answer);
-            startMenu();
-        });
-}
+
+    let employees = await db.addRole(role);
+    console.log(employees.affectedRows + " role added.");
+    startMenu();
+
+};
 
 async function updateEmployeeRole() {
+    let employee = await inquirer
     inquirer
         .prompt([
             {
@@ -171,10 +176,9 @@ async function updateEmployeeRole() {
                 message: "What is the new role of the employee?",
             },
         ])
-        .then((answer) => {
-            db.updateEmployeeRole(answer);
-            startMenu();
-        });
-}
+        let employees = await db.updateEmployeeRole(employee);
+        console.log(employees.affectedRows + " employee updated.");
+        startMenu();
+};
 
 startMenu();
